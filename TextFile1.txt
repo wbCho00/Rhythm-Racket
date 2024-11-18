@@ -1,0 +1,14 @@
+		yield return new WaitForSeconds(bit4);
+		yield return new WaitForSeconds(bit8);
+		yield return new WaitForSeconds(bit16);
+		yield return new WaitForSeconds(bitswing);
+		yield return new WaitForSeconds(bit2);
+		yield return new WaitForSeconds(bit1);
+		
+		
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+
+

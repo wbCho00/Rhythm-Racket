@@ -6,6 +6,7 @@ public class DemoStart : MonoBehaviour
 {
 	public GameObject guideDetection;        // Guide_Detection 오브젝트 (Hierarchy에서 연결)
 	public GameObject mainCanvas;            // 메인 캔버스 오브젝트 Hierarchy
+	public GameObject savedObject; // 저장된 속도와 각도 불러오는 오브젝트
 	public TextMeshProUGUI scoreText;
 	public GameObject ballPrefab;            // 공 prefab
 	public Transform cannon1Transform;       // 1번 대포 Hierarchy
@@ -19,8 +20,13 @@ public class DemoStart : MonoBehaviour
 	public float launchInterval = 1.0f;      // 공을 발사할 시간 간격
 	public float ballLifetime = 5.0f;        // 공의 최대 생존 시간
 	public int score = 0;
+	public AudioSource musicPlayer;
+	public AudioClip mainMusic;
 	public AudioClip collisionSound;         // 충돌 시 재생할 소리
-	public AudioSource audioSource;          // 오디오 소스 컴포넌트
+	public AudioSource ballAudioSource;          // 오디오 소스 컴포넌트
+
+	private float bpm = 95f;
+
 	void Start()
 	{
 	}
@@ -33,11 +39,42 @@ public class DemoStart : MonoBehaviour
 		//mainCanvas.transform.position += new Vector3(0, 500, 0);
 
 		// 공 던지는 함수 호출
+		StartCoroutine(PlayMusic());
 		StartCoroutine(LaunchBallsSequence());
 	}
+	IEnumerator PlayMusic()
+	{
+		yield return new WaitForSeconds(1.2f);
+		if (musicPlayer != null && mainMusic != null)
+		{
+			musicPlayer.PlayOneShot(mainMusic);
+			yield return new WaitForSeconds(46f);
+			musicPlayer.Stop();
+		}
 
+	}
 	IEnumerator LaunchBallsSequence()
 	{
+		float bpm2ms = 60f / bpm;
+		float bit4 = bpm2ms;				//1aaa 4분음표 1박
+		float bit8 = bpm2ms / 2f;			//1a1a 8분음표
+		float bit16 = bpm2ms / 4f;			//1111 16분음표
+		float bitswing = bpm2ms / 4f * 3f;	//1aa1 스윙박자
+		float bit2 = bpm2ms * 2f;			//1aaa aaaa 2분음표 2박
+		float bit1 = bpm2ms * 4f;           //1aaa aaaa aaaa aaaa 온음표 1마디
+		//yield return new WaitForSeconds(bit4);
+		//yield return new WaitForSeconds(bit8);
+		//yield return new WaitForSeconds(bit16);
+		//yield return new WaitForSeconds(bitswing);
+		//yield return new WaitForSeconds(bit2);
+		//yield return new WaitForSeconds(bit1);
+
+
+		//yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		//yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		//yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		//yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+
 		scoreText.text = "Score: " + score;
 
 		// Guide_Detection 오브젝트 위치를 (0, 0, 0)으로 이동
@@ -45,18 +82,188 @@ public class DemoStart : MonoBehaviour
 		// mainCanvas 오브젝트를 y축 방향으로 500 이동시켜서 보이지 않게 함
 		mainCanvas.transform.position += new Vector3(0, 500, 0);
 
-		// 4개의 대포에서 공을 발사하는 루틴 시작
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform);
-		yield return new WaitForSeconds(launchInterval);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform);
-		yield return new WaitForSeconds(launchInterval);
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform);
-		yield return new WaitForSeconds(launchInterval);
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform);
+		yield return new WaitForSeconds(0.577f); //음원 시작 후 대기시간
 
-		// 추가로 공 발사하는 타이밍을 여기에 추가할 수 있습니다
-		yield return new WaitForSeconds(launchInterval);
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform);
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bit2);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit2);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bit2);
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		yield return new WaitForSeconds(bit2);
+
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bit2);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit2);
+
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상		
+		yield return new WaitForSeconds(bit2);
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하		
+		yield return new WaitForSeconds(bit2);
+
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하		
+		yield return new WaitForSeconds(bit2);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하		
+		yield return new WaitForSeconds(bit2);
+
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상		
+		yield return new WaitForSeconds(bit2);
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하		
+		yield return new WaitForSeconds(bit2);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bit1);
+
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상	
+		yield return new WaitForSeconds(bit2);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하	
+		yield return new WaitForSeconds(bit2);
+
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bit1);
+
+		yield return new WaitForSeconds(bit1);
+
+		//전주끝남
+
+		//A 323 323 332 4
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bitswing);
+
+
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit8);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bitswing);
+
+
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bitswing);
+
+
+
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		yield return new WaitForSeconds(bit8);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bitswing);
+
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bitswing);
+
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bitswing);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit8);
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bit2);
+
+
+		//B 323 422 341 8
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bitswing);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit8);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bitswing);
+
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit4);
+
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		yield return new WaitForSeconds(bit8);
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bit8);
+
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		yield return new WaitForSeconds(bitswing);		
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bit4);
+
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit16);
+		yield return new WaitForSeconds(bit2);
+
+
+		//C 323 323 332 422
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bitswing);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit8);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bitswing);
+
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bitswing);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit8);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bitswing);
+
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bitswing);
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		yield return new WaitForSeconds(bitswing);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bit8);
+
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit4);
+
+		yield return new WaitForSeconds(bit8);
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit8);
+
+
+		//D 31 4 4 121 4 31 4 4
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		yield return new WaitForSeconds(bitswing);
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bit16);
+
+		yield return new WaitForSeconds(bit4);
+
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bit4);
+
+		yield return new WaitForSeconds(bit16);
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		yield return new WaitForSeconds(bit8);
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bit16);
+		//
+		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //좌하
+		yield return new WaitForSeconds(bit4);
+
+		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //우하
+		yield return new WaitForSeconds(bitswing);
+		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //좌상
+		yield return new WaitForSeconds(bit16);
+
+		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //우상
+		yield return new WaitForSeconds(bit4);
+
+		yield return new WaitForSeconds(bit4);
+
+		//자르기 테스트
+
+
+
+		//StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1)); 로 바꿔보기?
+		//Time.deltatime 이용하기?
+
+
+
+
 
 
 		// 곡 끝남
@@ -69,17 +276,45 @@ public class DemoStart : MonoBehaviour
 		score = 0;
 	}
 
-	IEnumerator LaunchBall(GameObject ballPrefab, Transform cannonTransform, Transform targetTransform)
+	IEnumerator LaunchBall(GameObject ballPrefab, Transform cannonTransform, Transform targetTransform, int Type)
 	{
 		// 공의 인스턴스 생성
 		GameObject ball = Instantiate(ballPrefab, cannonTransform.position, cannonTransform.rotation);
+		SavedValues savedValues = savedObject.GetComponent<SavedValues>();
 
 		// ProjectileMotion 스크립트에 시작 위치와 목표 위치 설정
 		ProjectileMotion projectileMotion = ball.GetComponent<ProjectileMotion>();
 		if (projectileMotion != null)
 		{
 			projectileMotion.startPoint = cannonTransform;
+			Debug.Log("cannon position: " + cannonTransform.position);
 			projectileMotion.targetPoint = targetTransform;
+			Debug.Log("target position: " + targetTransform.position);
+			switch (Type)
+			{
+				case 1:
+					projectileMotion.velocity = savedValues.velocity1;
+					projectileMotion.angleDeg = savedValues.angle1;
+					break;
+				case 2:
+					projectileMotion.velocity = savedValues.velocity2;
+					projectileMotion.angleDeg = savedValues.angle2;
+					break;
+
+				case 3:
+					projectileMotion.velocity = savedValues.velocity3;
+					projectileMotion.angleDeg = savedValues.angle3;
+					break;
+
+				case 4:
+					projectileMotion.velocity = savedValues.velocity4;
+					projectileMotion.angleDeg = savedValues.angle4;
+					break;
+
+				default:
+					Debug.LogError("타입 에러");
+					break;
+			}
 		}
 		// BallCollisionHandler 스크립트를 공에 추가
 		BallCollisionHandler ballCollisionHandler = ball.AddComponent<BallCollisionHandler>();

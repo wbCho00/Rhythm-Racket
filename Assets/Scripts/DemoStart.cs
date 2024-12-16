@@ -1,46 +1,45 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 using TMPro;
 
 public class DemoStart : MonoBehaviour
 {
-	public GameObject guideDetection;        // Guide_Detection ¿ÀºêÁ§Æ® (Hierarchy¿¡¼­ ¿¬°á)
-	public GameObject mainCanvas;            // ¸ŞÀÎ Äµ¹ö½º ¿ÀºêÁ§Æ® Hierarchy
-	public GameObject savedObject; // ÀúÀåµÈ ¼Óµµ¿Í °¢µµ ºÒ·¯¿À´Â ¿ÀºêÁ§Æ®
+	public GameObject guideDetection;        
+	public GameObject mainCanvas;            
+	public GameObject savedObject; 
 	public TextMeshProUGUI scoreText;
-	public GameObject ballPrefab;            // °ø prefab
-	public Transform cannon1Transform;       // 1¹ø ´ëÆ÷ Hierarchy
-	public Transform cannon2Transform;       // 2¹ø ´ëÆ÷ Hierarchy
-	public Transform cannon3Transform;       // 3¹ø ´ëÆ÷ Hierarchy
-	public Transform cannon4Transform;       // 4¹ø ´ëÆ÷ Hierarchy
-	public Transform ballGuideLUTransform;   // ÁÂ»ó´Ü °ø µµÂøÁöÁ¡ Hierarchy
-	public Transform ballGuideLDTransform;   // ÁÂÇÏ´Ü °ø µµÂøÁöÁ¡ Hierarchy
-	public Transform ballGuideRUTransform;   // ¿ì»ó´Ü °ø µµÂøÁöÁ¡ Hierarchy
-	public Transform ballGuideRDTransform;   // ¿ìÇÏ´Ü °ø µµÂøÁöÁ¡ Hierarchy
-	public float launchInterval = 1.0f;      // °øÀ» ¹ß»çÇÒ ½Ã°£ °£°İ
-	public float ballLifetime = 5.0f;        // °øÀÇ ÃÖ´ë »ıÁ¸ ½Ã°£
+	public GameObject ballPrefab;            
+	public Transform cannon1Transform;       
+	public Transform cannon2Transform;       
+	public Transform cannon3Transform;       
+	public Transform cannon4Transform;       
+	public Transform ballGuideLUTransform;   
+	public Transform ballGuideLDTransform;   
+	public Transform ballGuideRUTransform;   
+	public Transform ballGuideRDTransform;   
+	public float launchInterval = 1.0f;      
+	public float ballLifetime = 5.0f;        
 	public int score = 0;
 	public AudioSource musicPlayer;
 	public AudioClip mainMusic;
-	public AudioClip collisionSound;         // Ãæµ¹ ½Ã Àç»ıÇÒ ¼Ò¸®
-	public AudioSource ballAudioSource;          // ¿Àµğ¿À ¼Ò½º ÄÄÆ÷³ÍÆ®
+	public AudioClip collisionSound;         
+	public AudioSource ballAudioSource;          
 
 	private float bpm = 95f;
+	private float height = 0.5f;
 
-	void Start()
+    public GameObject ray; // Äá»‘i tÆ°á»£ng ray
+    public RacketManager racketManager; // Script RacketManager
+
+
+    void Start()
 	{
 	}
 
 	public void OnStartButtonClick()
 	{
-		////Guide_Detection ¿ÀºêÁ§Æ® À§Ä¡¸¦(0, 0, 0)À¸·Î ÀÌµ¿
-		//guideDetection.transform.position = Vector3.zero;
-		////mainCanvas ¿ÀºêÁ§Æ®¸¦ yÃà ¹æÇâÀ¸·Î 500 ÀÌµ¿½ÃÄÑ¼­ º¸ÀÌÁö ¾Ê°Ô ÇÔ
-		//mainCanvas.transform.position += new Vector3(0, 500, 0);
-
-		// °ø ´øÁö´Â ÇÔ¼ö È£Ãâ
 		StartCoroutine(PlayMusic());
-		StartCoroutine(LaunchBallsSequence());
+		StartCoroutine(LaunchBallsSequenceReminiscence());
 	}
 	IEnumerator PlayMusic()
 	{
@@ -53,224 +52,235 @@ public class DemoStart : MonoBehaviour
 		}
 
 	}
-	IEnumerator LaunchBallsSequence()
+	IEnumerator LaunchBallsSequenceReminiscence()
 	{
 		float bpm2ms = 60f / bpm;
-		float bit4 = bpm2ms;				//1aaa 4ºĞÀ½Ç¥ 1¹Ú
-		float bit8 = bpm2ms / 2f;			//1a1a 8ºĞÀ½Ç¥
-		float bit16 = bpm2ms / 4f;			//1111 16ºĞÀ½Ç¥
-		float bitswing = bpm2ms / 4f * 3f;	//1aa1 ½ºÀ®¹ÚÀÚ
-		float bit2 = bpm2ms * 2f;			//1aaa aaaa 2ºĞÀ½Ç¥ 2¹Ú
-		float bit1 = bpm2ms * 4f;           //1aaa aaaa aaaa aaaa ¿ÂÀ½Ç¥ 1¸¶µğ
-		//yield return new WaitForSeconds(bit4);
-		//yield return new WaitForSeconds(bit8);
-		//yield return new WaitForSeconds(bit16);
-		//yield return new WaitForSeconds(bitswing);
-		//yield return new WaitForSeconds(bit2);
-		//yield return new WaitForSeconds(bit1);
+		float bit4 = bpm2ms;				//1aaa 4ÂºÃÃ€Â½Ã‡Â¥ 1Â¹Ãš
+		float bit8 = bpm2ms / 2f;			//1a1a 8ÂºÃÃ€Â½Ã‡Â¥
+		float bit16 = bpm2ms / 4f;			//1111 16ÂºÃÃ€Â½Ã‡Â¥
+		float bitswing = bpm2ms / 4f * 3f;	//1aa1 Â½ÂºÃ€Â®Â¹ÃšÃ€Ãš
+		float bit2 = bpm2ms * 2f;			//1aaa aaaa 2ÂºÃÃ€Â½Ã‡Â¥ 2Â¹Ãš
+		float bit1 = bpm2ms * 4f;           //1aaa aaaa aaaa aaaa Â¿Ã‚Ã€Â½Ã‡Â¥ 1Â¸Â¶ÂµÃ°
+											//yield return new WaitForSeconds(bit4);
+											//yield return new WaitForSeconds(bit8);
+											//yield return new WaitForSeconds(bit16);
+											//yield return new WaitForSeconds(bitswing);
+											//yield return new WaitForSeconds(bit2);
+											//yield return new WaitForSeconds(bit1);
 
 
-		//yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
-		//yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
-		//yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
-		//yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		//StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
+		//StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
+		//StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
+		//StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 
 		scoreText.text = "Score: " + score;
 
-		// Guide_Detection ¿ÀºêÁ§Æ® À§Ä¡¸¦ (0, 0, 0)À¸·Î ÀÌµ¿
-		guideDetection.transform.position = Vector3.zero;
-		// mainCanvas ¿ÀºêÁ§Æ®¸¦ yÃà ¹æÇâÀ¸·Î 500 ÀÌµ¿½ÃÄÑ¼­ º¸ÀÌÁö ¾Ê°Ô ÇÔ
+		// Guide_Detection Â¿Ã€ÂºÃªÃÂ§Ã†Â® Ã€Â§Ã„Â¡Â¸Â¦ (0, 0, 0)Ã€Â¸Â·Ã Ã€ÃŒÂµÂ¿
+		guideDetection.transform.position = new Vector3(0, height, 0);
+		// mainCanvas Â¿Ã€ÂºÃªÃÂ§Ã†Â®Â¸Â¦ yÃƒÃ  Â¹Ã¦Ã‡Ã¢Ã€Â¸Â·Ã 500 Ã€ÃŒÂµÂ¿Â½ÃƒÃ„Ã‘Â¼Â­ ÂºÂ¸Ã€ÃŒÃÃ¶ Â¾ÃŠÂ°Ã” Ã‡Ã”
 		mainCanvas.transform.position += new Vector3(0, 500, 0);
 
-		yield return new WaitForSeconds(0.577f); //À½¿ø ½ÃÀÛ ÈÄ ´ë±â½Ã°£
+		yield return new WaitForSeconds(0.577f); //Ã€Â½Â¿Ã¸ Â½ÃƒÃ€Ã› ÃˆÃ„ Â´Ã«Â±Ã¢Â½ÃƒÂ°Â£
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit2);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
-		yield return new WaitForSeconds(bit2);
-
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
-		yield return new WaitForSeconds(bit2);
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit2);
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bit2);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
-		yield return new WaitForSeconds(bit2);
-
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó		
-		yield return new WaitForSeconds(bit2);
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ		
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
 		yield return new WaitForSeconds(bit2);
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ		
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bit2);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ		
-		yield return new WaitForSeconds(bit2);
-
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó		
-		yield return new WaitForSeconds(bit2);
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ		
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit2);
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
+		yield return new WaitForSeconds(bit2);
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
+		yield return new WaitForSeconds(bit2);
+
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
+		yield return new WaitForSeconds(bit2);
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
+		yield return new WaitForSeconds(bit2);
+
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
+		yield return new WaitForSeconds(bit2);
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
+		yield return new WaitForSeconds(bit2);
+
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bit1);
 
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó	
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
 		yield return new WaitForSeconds(bit2);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ	
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit2);
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bit1);
 
 		yield return new WaitForSeconds(bit1);
 
-		//ÀüÁÖ³¡³²
+		//Ã€Ã¼ÃÃ–Â³Â¡Â³Â²
 
 		//A 323 323 332 4
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bitswing);
 
 
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit8);
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bitswing);
 
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bitswing);
 
 
 
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
 		yield return new WaitForSeconds(bit8);
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bitswing);
 
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bitswing);
 
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bitswing);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit8);
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bit2);
 
 
 		//B 323 422 341 8
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bitswing);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit8);
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bitswing);
 
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit4);
 
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
 		yield return new WaitForSeconds(bit8);
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bit8);
 
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
-		yield return new WaitForSeconds(bitswing);		
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
+		yield return new WaitForSeconds(bitswing);
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bit4);
 
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit16);
 		yield return new WaitForSeconds(bit2);
 
 
 		//C 323 323 332 422
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bitswing);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit8);
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bitswing);
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bitswing);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit8);
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bitswing);
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bitswing);
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
 		yield return new WaitForSeconds(bitswing);
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bit8);
 
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit4);
 
 		yield return new WaitForSeconds(bit8);
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit8);
 
 
 		//D 31 4 4 121 4 31 4 4
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
 		yield return new WaitForSeconds(bitswing);
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bit16);
 
 		yield return new WaitForSeconds(bit4);
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bit4);
 
 		yield return new WaitForSeconds(bit16);
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
 		yield return new WaitForSeconds(bit8);
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bit16);
 		//
-		yield return LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2); //ÁÂÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon2Transform, ballGuideLDTransform, 2));
 		yield return new WaitForSeconds(bit4);
 
-		yield return LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4); //¿ìÇÏ
+		StartCoroutine(LaunchBall(ballPrefab, cannon4Transform, ballGuideRDTransform, 4));
 		yield return new WaitForSeconds(bitswing);
-		yield return LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1); //ÁÂ»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1));
 		yield return new WaitForSeconds(bit16);
 
-		yield return LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3); //¿ì»ó
+		StartCoroutine(LaunchBall(ballPrefab, cannon3Transform, ballGuideRUTransform, 3));
 		yield return new WaitForSeconds(bit4);
 
 		yield return new WaitForSeconds(bit4);
 
-		//ÀÚ¸£±â Å×½ºÆ®
+		//Ã€ÃšÂ¸Â£Â±Ã¢ Ã…Ã—Â½ÂºÃ†Â®
 
 
 
-		//StartCoroutine(LaunchBall(ballPrefab, cannon1Transform, ballGuideLUTransform, 1)); ·Î ¹Ù²ãº¸±â?
-		//Time.deltatime ÀÌ¿ëÇÏ±â?
+		//Time.deltatime Ã€ÃŒÂ¿Ã«Ã‡ÃÂ±Ã¢?
 
 
 
 
 
 
-		// °î ³¡³²
+		// Â°Ã® Â³Â¡Â³Â²
 		yield return new WaitForSeconds(3.0f);
-		// mainCanvas ¿ÀºêÁ§Æ®¸¦ yÃà ¹æÇâÀ¸·Î -500 ÀÌµ¿½ÃÄÑ¼­ ´Ù½Ã º¸ÀÌ°Ô ÇÔ
-		mainCanvas.transform.position += new Vector3(0, -500, 0);
-		// Guide_Detection ¿ÀºêÁ§Æ® À§Ä¡¸¦ (0, 500, 0)À¸·Î ÀÌµ¿½ÃÄÑ¼­ º¸ÀÌÁö ¾Ê°Ô ÇÔ
+        if (ray != null)
+        {
+            ray.SetActive(true);
+            Debug.Log("Ray has been re-enabled.");
+        }
+
+        if (racketManager != null)
+        {
+            racketManager.OnSongEnded();
+            Debug.Log("Rackets removed via RacketManager.");
+        }
+        // mainCanvas Â¿Ã€ÂºÃªÃÂ§Ã†Â®Â¸Â¦ yÃƒÃ  Â¹Ã¦Ã‡Ã¢Ã€Â¸Â·Ã -500 Ã€ÃŒÂµÂ¿Â½ÃƒÃ„Ã‘Â¼Â­ Â´Ã™Â½Ãƒ ÂºÂ¸Ã€ÃŒÂ°Ã” Ã‡Ã”
+        mainCanvas.transform.position += new Vector3(0, -500, 0);
+		// Guide_Detection Â¿Ã€ÂºÃªÃÂ§Ã†Â® Ã€Â§Ã„Â¡Â¸Â¦ (0, 500, 0)Ã€Â¸Â·Ã Ã€ÃŒÂµÂ¿Â½ÃƒÃ„Ã‘Â¼Â­ ÂºÂ¸Ã€ÃŒÃÃ¶ Â¾ÃŠÂ°Ã” Ã‡Ã”
 		guideDetection.transform.position += new Vector3(0, 500, 0);
 		scoreText.text = "";
 		score = 0;
@@ -278,11 +288,11 @@ public class DemoStart : MonoBehaviour
 
 	IEnumerator LaunchBall(GameObject ballPrefab, Transform cannonTransform, Transform targetTransform, int Type)
 	{
-		// °øÀÇ ÀÎ½ºÅÏ½º »ı¼º
+		// Â°Ã¸Ã€Ã‡ Ã€ÃÂ½ÂºÃ…ÃÂ½Âº Â»Ã½Â¼Âº
 		GameObject ball = Instantiate(ballPrefab, cannonTransform.position, cannonTransform.rotation);
 		SavedValues savedValues = savedObject.GetComponent<SavedValues>();
 
-		// ProjectileMotion ½ºÅ©¸³Æ®¿¡ ½ÃÀÛ À§Ä¡¿Í ¸ñÇ¥ À§Ä¡ ¼³Á¤
+		// ProjectileMotion Â½ÂºÃ…Â©Â¸Â³Ã†Â®Â¿Â¡ Â½ÃƒÃ€Ã› Ã€Â§Ã„Â¡Â¿Ã Â¸Ã±Ã‡Â¥ Ã€Â§Ã„Â¡ Â¼Â³ÃÂ¤
 		ProjectileMotion projectileMotion = ball.GetComponent<ProjectileMotion>();
 		if (projectileMotion != null)
 		{
@@ -312,18 +322,18 @@ public class DemoStart : MonoBehaviour
 					break;
 
 				default:
-					Debug.LogError("Å¸ÀÔ ¿¡·¯");
+					Debug.LogError("Ã…Â¸Ã€Ã” Â¿Â¡Â·Â¯");
 					break;
 			}
 		}
-		// BallCollisionHandler ½ºÅ©¸³Æ®¸¦ °ø¿¡ Ãß°¡
+		// BallCollisionHandler Â½ÂºÃ…Â©Â¸Â³Ã†Â®Â¸Â¦ Â°Ã¸Â¿Â¡ ÃƒÃŸÂ°Â¡
 		BallCollisionHandler ballCollisionHandler = ball.AddComponent<BallCollisionHandler>();
 		ballCollisionHandler.guideDetection = guideDetection;
 		ballCollisionHandler.onScoreUpdate = UpdateScore;
 		ballCollisionHandler.collisionSound = collisionSound;
 		ballCollisionHandler.audioSource = ball.GetComponent<AudioSource>();
 
-		// ÀÏÁ¤ ½Ã°£ ÈÄ °ø Á¦°Å (ÃÖÀûÈ­¸¦ À§ÇØ)
+		// Ã€ÃÃÂ¤ Â½ÃƒÂ°Â£ ÃˆÃ„ Â°Ã¸ ÃÂ¦Â°Ã… (ÃƒÃ–Ã€Ã»ÃˆÂ­Â¸Â¦ Ã€Â§Ã‡Ã˜)
 		Destroy(ball, ballLifetime);
 
 		yield return null;
@@ -336,32 +346,32 @@ public class DemoStart : MonoBehaviour
 }
 public class BallCollisionHandler : MonoBehaviour
 {
-	public GameObject guideDetection; // Guide_Detection ¿ÀºêÁ§Æ®
+	public GameObject guideDetection; // Guide_Detection Â¿Ã€ÂºÃªÃÂ§Ã†Â®
 	public System.Action<int> onScoreUpdate;
-	public AudioClip collisionSound;   // Ãæµ¹ ½Ã Àç»ıÇÒ ¼Ò¸®
-	public AudioSource audioSource;    // ¿Àµğ¿À ¼Ò½º ÄÄÆ÷³ÍÆ®
-	private bool hasCollided = false;  // Ã¹ ¹øÂ° Ãæµ¹¸¸ Ã³¸®ÇÏ±â À§ÇÑ ÇÃ·¡±×
+	public AudioClip collisionSound;   // ÃƒÃ¦ÂµÂ¹ Â½Ãƒ Ã€Ã§Â»Ã½Ã‡Ã’ Â¼Ã’Â¸Â®
+	public AudioSource audioSource;    // Â¿Ã€ÂµÃ°Â¿Ã€ Â¼Ã’Â½Âº Ã„Ã„Ã†Ã·Â³ÃÃ†Â®
+	private bool hasCollided = false;  // ÃƒÂ¹ Â¹Ã¸Ã‚Â° ÃƒÃ¦ÂµÂ¹Â¸Â¸ ÃƒÂ³Â¸Â®Ã‡ÃÂ±Ã¢ Ã€Â§Ã‡Ã‘ Ã‡ÃƒÂ·Â¡Â±Ã—
 
 	void OnCollisionEnter(Collision collision)
 	{
-		if (hasCollided) return; // ÀÌ¹Ì Ãæµ¹ÇßÀ¸¸é ÀÌÈÄ Ãæµ¹ ¹«½Ã
+		if (hasCollided) return; // Ã€ÃŒÂ¹ÃŒ ÃƒÃ¦ÂµÂ¹Ã‡ÃŸÃ€Â¸Â¸Ã© Ã€ÃŒÃˆÃ„ ÃƒÃ¦ÂµÂ¹ Â¹Â«Â½Ãƒ
 		
-		// ¶óÄÏ°úÀÇ Ãæµ¹À» °¨Áö
+		// Â¶Ã³Ã„ÃÂ°ÃºÃ€Ã‡ ÃƒÃ¦ÂµÂ¹Ã€Â» Â°Â¨ÃÃ¶
 		if (collision.gameObject.CompareTag("Rackets"))
 		{
-			hasCollided = true; // Ã¹ ¹øÂ° Ãæµ¹ ¹ß»ı
-			Debug.Log("°øÀÌ ¶óÄÏ°ú Ãæµ¹Çß½À´Ï´Ù.");
-			Vector3 collisionPoint = collision.contacts[0].point; // Ãæµ¹ ÁöÁ¡ ÁÂÇ¥ ±â·Ï
-			Debug.Log("Ãæµ¹ À§Ä¡: " + collisionPoint);
+			hasCollided = true; // ÃƒÂ¹ Â¹Ã¸Ã‚Â° ÃƒÃ¦ÂµÂ¹ Â¹ÃŸÂ»Ã½
+			Debug.Log("Â°Ã¸Ã€ÃŒ Â¶Ã³Ã„ÃÂ°Ãº ÃƒÃ¦ÂµÂ¹Ã‡ÃŸÂ½Ã€Â´ÃÂ´Ã™.");
+			Vector3 collisionPoint = collision.contacts[0].point; // ÃƒÃ¦ÂµÂ¹ ÃÃ¶ÃÂ¡ ÃÃ‚Ã‡Â¥ Â±Ã¢Â·Ã
+			Debug.Log("ÃƒÃ¦ÂµÂ¹ Ã€Â§Ã„Â¡: " + collisionPoint);
 			
-			// Ãæµ¹ ¼Ò¸® Àç»ı
+			// ÃƒÃ¦ÂµÂ¹ Â¼Ã’Â¸Â® Ã€Ã§Â»Ã½
 			if (audioSource != null && collisionSound != null)
 			{
 				audioSource.PlayOneShot(collisionSound);
 			}
 
-			// Guide_Detection ³»ÀÇ Å¥ºê¿Í Ãæµ¹ À§Ä¡ ÆÇÁ¤
-			// Guide_Detection ³»ÀÇ DetectionBox ÀÚ½Ä ¿ÀºêÁ§Æ®¸¦ Ã£°í, ±× ÀÚ½Ä ¿ÀºêÁ§Æ®µé Áß Detection Å¥ºê¿Í Ãæµ¹ À§Ä¡ ÆÇÁ¤
+			// Guide_Detection Â³Â»Ã€Ã‡ Ã…Â¥ÂºÃªÂ¿Ã ÃƒÃ¦ÂµÂ¹ Ã€Â§Ã„Â¡ Ã†Ã‡ÃÂ¤
+			// Guide_Detection Â³Â»Ã€Ã‡ DetectionBox Ã€ÃšÂ½Ã„ Â¿Ã€ÂºÃªÃÂ§Ã†Â®Â¸Â¦ ÃƒÂ£Â°Ã­, Â±Ã— Ã€ÃšÂ½Ã„ Â¿Ã€ÂºÃªÃÂ§Ã†Â®ÂµÃ© ÃÃŸ Detection Ã…Â¥ÂºÃªÂ¿Ã ÃƒÃ¦ÂµÂ¹ Ã€Â§Ã„Â¡ Ã†Ã‡ÃÂ¤
 			Transform detectionBox = guideDetection.transform.Find("DetectionBox");
 			if (detectionBox != null)
 			{
@@ -384,7 +394,7 @@ public class BallCollisionHandler : MonoBehaviour
 						{
 							onScoreUpdate(scoreToAdd);
 						}
-						Debug.Log(child.name + " Å¥ºê¿Í Ãæµ¹Çß½À´Ï´Ù! Á¡¼ö¸¦ ¾ò½À´Ï´Ù: " + scoreToAdd);
+						Debug.Log(child.name + " Ã…Â¥ÂºÃªÂ¿Ã ÃƒÃ¦ÂµÂ¹Ã‡ÃŸÂ½Ã€Â´ÃÂ´Ã™! ÃÂ¡Â¼Ã¶Â¸Â¦ Â¾Ã²Â½Ã€Â´ÃÂ´Ã™: " + scoreToAdd);
 					}
 				}
 			}

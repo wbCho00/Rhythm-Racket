@@ -332,6 +332,8 @@ public class DemoStart : MonoBehaviour
 		ballCollisionHandler.onScoreUpdate = UpdateScore;
 		ballCollisionHandler.collisionSound = collisionSound;
 		ballCollisionHandler.audioSource = ball.GetComponent<AudioSource>();
+	ballCollisionHandler.laneIndex = Type;
+	ballCollisionHandler.targetPoint = targetTransform;
 
 		// ÀÏÁ¤ ½Ã°£ ÈÄ °ø Á¦°Å (ÃÖÀûÈ­¸¦ À§ÇØ)
 		Destroy(ball, ballLifetime);
@@ -350,8 +352,70 @@ public class BallCollisionHandler : MonoBehaviour
 	public System.Action<int> onScoreUpdate;
 	public AudioClip collisionSound;   // Ãæµ¹ ½Ã Àç»ýÇÒ ¼Ò¸®
 	public AudioSource audioSource;    // ¿Àµð¿À ¼Ò½º ÄÄÆ÷³ÍÆ®
-	private bool hasCollided = false;  // Ã¹ ¹øÂ° Ãæµ¹¸¸ Ã³¸®ÇÏ±â À§ÇÑ ÇÃ·¡±×
+	private bool hasCollided = false;
+	public int laneIndex;
+	public Transform targetPoint;
+	public float desktopPerfectRadius = 0.75f;
+	public float desktopGoodRadius = 2f;
+	public int GetDesktopHitScore(int requestedLane, out float distance)
+    {
+        distance = targetPoint != null ? Vector3.Distance(transform.position, targetPoint.position) : float.PositiveInfinity;
+        if (hasCollided || requestedLane != laneIndex)
+            return 0;
 
+        int zoneScore = GetDetectionZoneScore(transform.position);
+        if (zoneScore > 0)
+            return zoneScore;
+
+        if (distance <= desktopPerfectRadius)
+            return 100;
+        if (distance <= desktopGoodRadius)
+            return 50;
+        return 0;
+    }
+
+    public void RegisterDesktopHit(int score)
+    {
+        if (hasCollided || score <= 0)
+            return;
+
+        hasCollided = true;
+        if (audioSource != null && collisionSound != null)
+            audioSource.PlayOneShot(collisionSound);
+        if (onScoreUpdate != null)
+            onScoreUpdate(score);
+
+        Rigidbody body = GetComponent<Rigidbody>();
+        if (body != null)
+            body.velocity = -body.velocity * 0.45f;
+
+        Destroy(gameObject, 0.35f);
+    }
+
+    private int GetDetectionZoneScore(Vector3 position)
+    {
+        if (guideDetection == null)
+            return 0;
+
+        Transform detectionBox = guideDetection.transform.Find("DetectionBox");
+        if (detectionBox == null)
+            return 0;
+
+        int bestScore = 0;
+        foreach (Transform child in detectionBox)
+        {
+            Collider zone = child.GetComponent<Collider>();
+            if (zone == null || !zone.bounds.Contains(position))
+                continue;
+
+            if (child.CompareTag("DetectionPerfect"))
+                bestScore = Mathf.Max(bestScore, 100);
+            else if (child.CompareTag("DetectionBad"))
+                bestScore = Mathf.Max(bestScore, 50);
+        }
+
+        return bestScore;
+    }
 	void OnCollisionEnter(Collision collision)
 	{
 		if (hasCollided) return; // ÀÌ¹Ì Ãæµ¹ÇßÀ¸¸é ÀÌÈÄ Ãæµ¹ ¹«½Ã

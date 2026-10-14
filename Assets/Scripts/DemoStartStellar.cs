@@ -504,6 +504,8 @@ public class DemoStartStellar : MonoBehaviour
 		ballCollisionHandler.onScoreUpdate = UpdateScore;
 		ballCollisionHandler.collisionSound = collisionSound;
 		ballCollisionHandler.audioSource = ball.GetComponent<AudioSource>();
+	ballCollisionHandler.laneIndex = Type;
+	ballCollisionHandler.targetPoint = targetTransform;
 
 		// ÀÏÁ¤ ½Ã°£ ÈÄ °ø Á¦°Å (ÃÖÀûÈ­¸¦ À§ÇØ)
 		Destroy(ball, ballLifetime);
